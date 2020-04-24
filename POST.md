@@ -434,9 +434,9 @@ useEffect(() => {
 }, [current, currentTeam, status, teams]);
 ```
 
-One thing may be interested to note here as I used a newest ES `'stats' in currentTeam` construction to check if `stats` key exists in team object. It's still equivalent to ways like `Object.keys().includes()` or or any others.
+> One thing may be interested to note here as I used a newest ES `'stats' in currentTeam` construction to check if `stats` key exists in team object. It's still equivalent to ways like `Object.keys().includes()` or or any others.
 
-Here is a good place where we should stop for a while and think about user experience. As you able to "render" the code in your mind you can notice that we only inform our app about it's state, and user still doesnt know if there is something happening in background. So lets implement some basic loader and use it for our components:
+Here is a good place where we should stop for a while and think about user experience. As you able to "render in mind" thee code you can notice that we only inform our app about it's state, and user still doesnt know if there is something happening in background. So lets implement some basic loader and use it for our components:
 I believe the best place for it will be with all app components so create a file like : 
 
 ```bash
@@ -454,15 +454,15 @@ Then we can use it in our Teams and Statistics like eg:
 
 ```javascript
 <section className="Statistics app-panel">
-        <h2>Statistics</h2>
+    <h2>Statistics</h2>
 
-        {teams.length === 0 &&
-        <Loading message={'Waiting for teams load'} />}
+    {teams.length === 0 &&
+    <Loading message={'Waiting for teams load'} />}
 
-        {status === 'loading' &&
-        <Loading message={`Downloading ${currentTeam.name} data`} />}
+    {status === 'loading' &&
+    <Loading message={`Downloading ${currentTeam.name} data`} />}
 
-        [...Fixtures table]
+    [...Fixtures table]
  </section>
 ```
 
@@ -571,8 +571,11 @@ To implement Profiler for our AppStore you should change for both projects `App.
  };
 ```
 
- After that you are able to read time of your app required for first render. Let's go to browser, open devtools at console tab and refresh several times (eye)catching average values. You can easy notice that our Hooks implementation is always faster, sometimes even twice. It is anyway hard to investigate what causes those rendering time differences. Profiler component for react is great feature for measuring smaller parts of application or even single components to identify parts that may benefit from optimizations like memoization. But if you like to catch all components at all and even better - in a tree view, then you have to use browsers built in DevTools Profiler for react. For some browsers it's available as an extension.
- Thanks to that profiler you can measure timings for even specific actions. Just start recording profile in point you want to check performance, and stop it whenever your use case ended. In my example i just stopped recording when components appeared on my screen (no need to wait for that as it will be second measurement as components updates and we are interested only about firs render time). After getting results aim the longest rendering components and try to use useMemo for memoization their functionality or whenever possible use lazy() for dynamic importing.
+After that you are able to read time of your app required for first render. Let's go to browser, open devtools at console tab, refresh several times and (eye)catch average values. You can easy notice that our Hooks implementation is always faster, sometimes even twice. I left those Profilers in my code at codesandbox.io so you can test it on your own at take a look at console results.
+  
+It is anyway hard to investigate what causes those rendering time differences. Profiler component for React is great feature for measuring smaller parts of application or even single components to identify parts that may bring benefits from optimizations like memoization etc. But if you like to catch all components at all and even better - in a tree view, then you have to use browsers built in DevTools Profiler for React. For some browsers it's available as an extension.
+  
+Thanks to that profiler you can measure timings for even specific actions. Just start recording profile in point you want to check performance, and stop it whenever your use case ended. In my example i just stopped recording when components appeared on my screen (no need to wait for that as it will be second measurement as components updates and we are interested only about firs render time). After getting results aim the longest rendering components and try to use useMemo for memoization their functionality or whenever possible use lazy() for dynamic importing.
  
  I made 5 test for our Redux app as well as for our Hooks app. You can see the results below :
    
@@ -604,14 +607,13 @@ We can see that the structure of project is more flatten, and functionality is m
 
 For 5 tries i recorded following render times : 5.8, 6.1, 6, 6.4, 6.3 which gives us around 6.1 as an average.
  
-The difference is huge (more than 40%). Not only in cleaner code and way better structured but because using built in React functionality we are able to save tons of times. Our values are small, but you can imagine those tones of time saved in large application as we cannot forget we are profiling just two empty areas.
+The difference is huge (around 30%). Not only in cleaner code and way better structure but because using built in React functionality we are able to save tons of times. Our values are small, but you can imagine it in large, complex application as we cannot forget we are profiling just two empty areas.
 
 Next you can try to play with measurement by yourself. Try to make own calculating based on React Profiler API with some of your components, or for overall and bigger purposes with great visualising effect use Profiler from your DevTools. You can try test reducers and their impact on rendering time to have better insight about the real differences in work. Both ready projects you can find on codesanbox.io with links above (or you can clone github repo linked from codesandbox). Do your own test, take your own conclusions, let me know what you think.
 
 As an conclusion you may take a look one more time how little is needed to switch between Redux and useReducer, as their actions and reducers stays the same and store object build with components connection to it requires actually several really easy and quick modifications, giving you less, cleaner, faster and better code ;)  
 
 ### HOLD ON! We haven't finished yet.
-As i promised, while we have our application ready, we can lunch TypeScript support and check the places where we can improve our code and make it safe from possible issues. Our current code is working as expected, but actually it is still sensitive to some problems. Let's say for example we didn't provided `process.env.REACT_APP_API_KEY` variable but we are not checking if it exists, just using it directly. JavaScript will return an error if that is missing, and TypeScript will help us to catch those possibilities and forces us to use it only when available. \
-Take a look at our [continuous article](https://www.chop-chop.org/article-1 "continuous article") if you would like to read more.
+As i promised, while we have our application ready, we can lunch TypeScript support and check the places where we can improve our code and make it safe from possible issues. Our current code is working as expected, but actually it is still sensitive to some problems. Let's say for example we didnt provided `process.env.REACT_APP_API_KEY` variable and we are just using it directly. You can imagine what may happened when it's missing. To see how we can prevent those situations take a look at our [continuous article](https://www.chop-chop.org/article-1 "continuous article") and read more.
 
 ```//TODO : Add proper article URL```
