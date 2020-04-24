@@ -357,4 +357,14 @@ or down there in rendered component :
 ##Conclusion
 
 TypeScript leverage makes our properties more discoverable and consistent. It's not restricted to any specific area, like hooks or functions. You can add it to any JS statement and take advantage of typing plain variables etc, but it's not only advantage of using TS. Thanks to great code completion supporting you can save plenty of time since you started your project already with TypeScript supported. \
-Please do not forget you can always try yourself at example environments i created for you, or clone repo and play with them at your local.
+Please do not forget you can always try yourself at example environments i created for you, or clone repo and play with them at your local: 
+
+https://codesandbox.io/s/github/theedgy/hooks-ts/tree/master/?autoresize=1&fontsize=12&hidenavigation=1&module=%2Fsrc%2FApp.tsx
+
+https://codesandbox.io/embed/github/theedgy/hooks-ts/tree/master/?autoresize=1&fontsize=12&hidenavigation=1&module=%2Fsrc%2FApp.tsx
+
+<iframe src="https://codesandbox.io/embed/github/theedgy/hooks-ts/tree/master/?autoresize=1&fontsize=12&hidenavigation=1&module=%2Fsrc%2FApp.tsx"
+     style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+     title="hooks-ts"
+     allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr"
+     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"></iframe>
