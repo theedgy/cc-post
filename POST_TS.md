@@ -1,5 +1,5 @@
 **Based on our [Premier League fixtures application](https://URL "Premier League fixtures application") from previous article, we are going to provide type checks for our functionality with TypeScript. TS is an open-source programming language from Microsoft. It help us prevent possible code issues whenever we do not provide or provide wrong, unexpected data to our components or functionality. In simple words it gives you the ability to add static types to your Javascript code. \
-This post will show you how to include TypeScript in already started project, but i always recommend to start it along with project ast it provides many great features while development** 
+This post will show you how to include TypeScript in already started project, but I always recommend to start it along with project ast it provides many great features while development** 
 
 In previous examples from plain redux or hooks we can meet many appearances of non properly checked data before it is rendered. You can still trace those issues if you have good and configured IDE which may prompt you about possible bug, but anyway we are allowed to render eg image like that :
 

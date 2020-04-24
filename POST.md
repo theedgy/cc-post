@@ -1,4 +1,4 @@
-**Since I started my adventure with react many things changed. I'm in love with all the new features around development, but sometimes i think it's growing to fast anyway, and it's really hard to track all interesting things at once. Nowadays React introduced great hooks you probably already heard about, and if so you know they provide totally great functionality. If you worked with global state management in React you used Redux or MobX (or some other less common) package for sure. While we have latest useContext and useReduced hooks from React we can forget about external libraries and I would like to show you how. \
+**Since I started my adventure with React many things changed. I'm in love with all the new features around development, but sometimes I think it's growing to fast anyway, and it's really hard to track all interesting things at once. Nowadays React introduced great hooks you probably already heard about, and if so you know they provide totally great functionality. If you worked with global state management in React you used Redux or MobX (or some other less common) package for sure. While we have latest useContext and useReduced hooks from React we can forget about external libraries and I would like to show you how. \
 We will start with build some really basic application with three-four components connected by Redux (based on data from some public free API) and then we are going to switch this connection from Redux to newest native React functionality.\
 As a second additional article I would like to show you how you can assure your code work properly and avoid many issues thanks to using TypeScript for this application. So I will go a bit deeper into properly constructed data flow through those `context`, `useReducer` and all components**
 
@@ -17,7 +17,7 @@ Actually we would like to make one more thing which is installing `node-sass` li
 
 ## Structure
 
-Let’s begin with code some basic fundamentals for our work, and let’s say we want to make a list with all English Premier League football teams, and second list somewhere nearby where we will display latest fixtures of clicked team. 
+Let’s begin with write some basic fundamentals for our work, and let’s say we want to make a list with all English Premier League football teams, and second list somewhere nearby where we will display latest fixtures of clicked team. 
 It will be really simple application with just two areas. 
 
 After CRA install lets create following structure in `src` folder:
@@ -35,7 +35,7 @@ After CRA install lets create following structure in `src` folder:
 ```
 
 
-I strongly believe the code is self explained. Some variables and objects you may noticed not described we will discus later as well when we connect our store. For now to avoid confusions you can imagine they are just passed props to our components. Every step of our article wll have a [codesandbox.io](https://codesandbox.io "codesandbox.io") full code included so you can always reference to full working example over there :)
+I strongly believe the code is self explained. Some variables and objects you may noticed are not described. We will discus them later as well when we connect our store. For now to avoid confusions you can imagine they are just passed props to our components. Every step of our articles will have a [codesandbox.io](https://codesandbox.io "codesandbox.io") entire code included so you can always reference to working example over there :)
 
 Our Teams component will just display title and loop of single Team components.
 
@@ -54,7 +54,7 @@ Our Teams component will just display title and loop of single Team components.
 </section>
 ```
     
-Single Team component is a combination of image (small logo of the team) and button which will trigger some action. But don't worry about it for now as well.
+Single Team component is a combination of icon (small logo of the team) and button which will trigger some action. But don't worry about it for now as well.
     
 ```javascript
 <p className="Team">
@@ -106,11 +106,14 @@ And in the end we can go to our main `App.js` file provided by **CRA** and rende
 
 ## Props Drilling
 
-Those two areas has to be connected each other and share their states, so we are facing a situation where local component state is not enough. Of course we can always pass our props through components tree, but it is really important to remember whenever your application starts to grow, will make keep all things clean much harder. You can find that solution under **props drilling**. Example below illustrates the situation for our (quite flat) structure: 
+Those two areas has to be connected and share their states, so we are facing a situation where local component state is not enough. 
+> Of course we can always pass our props through components tree, but it is really important to remember whenever your application starts to grow, will make keep all things clean much harder. 
+
+You can find that solution under **props drilling** name. Example below illustrates the situation for our (quite flat) structure: 
 
 ![](assets/props_drilling.png)
 
-To cover above problems developer used to use **Redux** the most. **Redux** with its **Provider** came here for a rescue. As you are reading this article I believe you know what **Redux** can do for you, but to be clear it’s a global state container which can keep all your app information and then thanks to **Provider** from `react-redux` library extension (which use standard `React Context API`), pass them to whichever component needs. So now we have desired functionality :
+To cover above problems developers used to use **Redux** the most. **Redux** with its **Provider** came here for a rescue. As you are reading this article I believe you know what **Redux** can do for you, but to be clear it’s a global state container which can keep all your app information and then thanks to **Provider** from `react-redux` library extension (which use standard `React Context API`) pass them to whichever component needs. So now we have desired functionality :
 
 ![](assets/context_props_passing.png)
 
@@ -119,13 +122,13 @@ To cover above problems developer used to use **Redux** the most. **Redux** with
 
 #### Redux is still in expansion
 
-I would like to focus on latest build in **React** hooks. They can make pretty same thing without any external libraries needed. I’m not going into **Redux** any deeper than required for our example, but if you still have some doubts about **Redux** take a look at their [documentation](https://redux.js.org/introduction/getting-started "documentation"). It still powerful and consistently updated library with many great features and even latest (middle of 2019) own hooks like **useDispatch** and **useStore** only references for functionality you need. We are going to use most common method for developers and we are going to use HOC `connect` to make our components 'talk' with store.
+I would like to focus on latest build in **React** hooks. They can make pretty same thing without any external libraries needed. I’m not going into **Redux** any deeper than required for our example, but if you still have some doubts about **Redux** take a look at their [documentation](https://redux.js.org/introduction/getting-started "documentation"). It is still powerful and consistently updated library with many great features and even latest (middle of 2019) own hooks like **useDispatch** and **useStore** whose only takes advantage on functionality you need. We are going to use most common method for developers and we are going to use HOC `connect` to make our components 'talk' with store.
 
 #### But it is React itself forces Redux to do so ;)
 
-Since **React** is still moving with the times, nowadays we have a really useful built in hooks. So let me introduce you a great and powerful cooperation of **useReducer** with **useContext**. To make it smoother to understand and see real differences we are going to start with create a global stating based on **Redux**, and then we move it to newest functionality form **React**.
+Since **React** is still moving with the times, nowadays we have a really useful built in hooks. So let me introduce you a great and powerful cooperation of **useReducer** with **useContext**. To make it smoother to understand and see real differences we are going to start with create a global stating based on **Redux** and then we move it to newest functionality form **React**.
 
-#### Let's some Redux(ing)
+#### Let's have some Redux(ing)
 For the beginning let's build our store. We want to keep our teams array in global state, as well as current team ID for reference, whenever user selects one of our teams.
 
 Extend our folders structure like so: 
@@ -142,7 +145,7 @@ Extend our folders structure like so:
 │   │   └── index.js
 ```
 
-Starting with teams let write some basic actions 
+Starting with teams let write some basic actions:
 
 ```javascript
 export const ADD_TEAM_STATS = 'ADD_TEAM_STATS';
@@ -184,8 +187,7 @@ export const teamsReducer = (state = null, action) => {
 };
 ```
 
- 
- and here we are checking which `action` was `dispatched` and return new modified state to consume by our components we connect to it. Thing to note here is I do not extend store for another `stats` space. I decided it would be easier and more reliable to keep teams data inside already pulled team object from API. Its a more clean way for me, but if you like and think is better to separate those feel free to make another `stats` array with stats objects extended of team id to easy find them. Having them saved in global store avoid making another call whenever use will click for a second time on the same Team. This will render current saved values in real time. Test it yourself on one of my codesanbox provided how fast will display data when you switch teams and then go back to previous one. This caching feature is what global store data all about for me. 
+Here we are checking which `action` was `dispatched` and return new modified state to consume by our components we connect to it. Thing to note here is I do not extend store for another `stats` space. I decided it would be easier and more reliable to keep teams data inside already pulled team object from API. Its a more clean way for me, but if you like and think is better to separate those, feel free to make another `stats` array with stats objects extended of team id to easy find them. Having them saved in global store avoid making another call whenever user will click for a second time on the same Team. This will render current saved values in real time. Test it yourself on one of my codesanbox provided how fast will display data when you switch teams and then go back to previous one. This caching data feature for me is what global states all about. 
  
  Then we can fill our `actions` and `reducers` for current team state accordingly: 
  
@@ -216,7 +218,7 @@ export const current = (state = null, action) => {
 };
 ```
 
-And finally we have to combine them all together and and send to our application. In our store `index.js` file put this code : 
+Finally we have to combine them all together and send to our application. In our store `index.js` file put this code : 
 
 ```javascript
 import React from 'react';
@@ -245,7 +247,7 @@ So we have really basic store example here. After importing our reducers we have
 
 The rest is a plain **Redux** `createStore` function. Returned state from that function we will pass down the tree by our mentioned earlier **Provider** to every rendered `children` which are passed to our store component.
 
-So, i hope it is clear, that to make it all connected we have to put our application as a children of Provider so let's extend our `App.js` file to return:
+So, I hope it is clear, that to make it all connected we have to put our application as a children of Provider so let's extend our `App.js` file to return:
     
 ```javascript
 <AppStore>
@@ -256,7 +258,7 @@ So, i hope it is clear, that to make it all connected we have to put our applica
 </AppStore>
 ```
      
-`AppStore` component is how we called our store component, and everything inside suppose to be possible to connect. We won't know without try, so lets do it. 
+`AppStore` is how we called our store component and everything inside suppose to be possible to connect. We won't know without try, so lets do it. 
 Starting as always from teams list we need to export it by HOC mentioned above `connect` :
 
 ```javascript
@@ -277,7 +279,7 @@ const Teams = ({ state: { teams }, onAddTeams }) => {}
 
 ... and we also handling prop `onAddTeams` which is function for dispatch our `addTeams` action.
 
-With those values now our **Teams** component finally looks like working one, because it has a properties required to render teams.
+With those values now our **Teams** component finally looks like working one because it has a properties required to render teams.
 
 The same operation will connect our single Team component to handle click function and fire proper `action` as well as Statistics component to display all fixtures whenever they appear in store:
 
@@ -317,8 +319,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(Statistics);
  From this point all our components are connected to store and can talk with it. All we have to do now is to provide some data to render.
 
 ## Api Connection
-There is many libraries out there (like axios etc.) which may help you build the best request, but i used plain js `fetch` as it's totally enough for our purpose.
-To keep all things clear and consistent create a new folder in you project `src` to keep our helper functionality:
+There is many libraries out there (like axios etc.) which may help you build the best request, but I used plain JS `fetch` as it's totally enough for our purpose.
+To keep all things clear and consistent create a new folder in your project `src` in place of helpers functionality:
 
 ```bash
 ├── src
@@ -349,14 +351,14 @@ export const apiConnection = async (endpoint = '') => {
 };
 ```
 
-So we've build base helper to handle api connection and we passing only one param as an endpoint for which will be different for every component.
+So we've build base helper to handle api connection and we passed only one param as an endpoint for which will be different for every component.
 
 `API_KEY` is stored as an environment variable. In codesandbox.io is hidden from visitors, but if you would like to clone the repository and try it yourself, you'll need to rename `.env.example` file to `.env` and switch inside value to your own.  
  
 > You may also want to extend your UX for some errors displaying etc. to improve your users experience but for our simple example we will just `throw Error` to somehow communicate about problems with frontend.
 
 #### Connect components to API and store it's values in Redux
-Now we can use this connection to get our teams from API in an **Teams** component effect:
+Now we can use this connection to get our teams data from API in a **Teams** component `useEffect`:
 
 ```javascript
 useEffect(() => {
@@ -392,11 +394,11 @@ useEffect(() => {
 }, [teams, status]);
 ```
 
-So when our component is in `loading` state it will also return because we know that calling api is in progress. Whenever it responded with success we can change a status of our app and our effect will anyway not fire anymore as the teams just appeared and another conditional is returning it. Just do not forget to update your effect dependencies on this `status` to avoid any issues with state refreshing.
+So when our component is in `loading` state it will also return because we know that calling api is in progress. Whenever it respond with success we can change a status of our app and our effect will not fire anymore as the teams just appeared, so another conditional is returning it. Just do not forget to update your effect dependencies on this `status` to avoid any issues with state refreshing.
 
-Please just have in mind that simple solution works ok for small projects like ours, but when you plan to write something bigger and you will have more places depended on this API call then i would suggest to write additional `action` and `reducer` to keep state of this part with it's data in place in global store, so every component waiting for that data can display their loaders or anything for user information that he's waiting for some process.
+Please just have in mind that simple solution works good for small projects like ours. When you plan to write something more complex with many places depended on this API request, then I would suggest to write additional `action` and `reducer` to keep state of this part as separated place in global store. Thanks to this, every component waiting for that data can display loaders, errors or anything for user information that something is currently processing.
   
-Second component which will also connect to our API to handle data is **Statistics**. To display current team information we will save a `current` value in our store and if assigned to this ID team object has a stats saved. If no we have to call API for that information and store them to later use in this team object: 
+Second component which will also connect to our API and handle data is **Statistics**. To display current team information we will save a `current` value in our store. To get it we check if there is a team object stored with same ID value as our `current`. Then if we find it, we need to check if that object has a `stats`. If no, we have to call API for that information and store them in this team object to later use : 
 
 ```javascript
 const [status, setStatus] = useState('idle');
@@ -466,7 +468,7 @@ Then we can use it in our Teams and Statistics like eg:
  </section>
 ```
 
-Note that we have two loaders here. First one appears when component is waiting for teams data (required for another Teams component, and here is a situation which i mentioned to you before that whenever it grows its good to keep that connection state with the data itself to use in many places).
+Note that we have two loaders here. First one appears when component is waiting for teams data (required for another Teams component, and here is a situation which I mentioned to you before that whenever it grows its good to keep that connection state with the data itself to use in many places).
 Then we have second one appeared when our component effect is connecting to API and set status to `loading`. At the end we display simple information to make user know what to do (but only at initial state), and when stats are finally loaded there are looped below. 
 
 So for now I presented only functional code point of view, because additional styles and other codes would make our article to big. All that code styled a bit to better visualise you can find below on codesandbox:
@@ -500,7 +502,7 @@ export const AppStore= ({ children }) => {
 };
 ```
     
-First of all we removed Redux Provider and used plain react Context (1st line). Then we replaced `createStore` function with **useReducer** hook.
+First of all we removed Redux Provider and used plain React Context (1st line). Then we replaced `createStore` function with **useReducer** hook.
 This reducers returns with two values array, our state, and dispatch function to fire an actions on state. It should looks familiar to you as we used it as a parameter for `mapDispatchToProps` function used with `connect` HOC from Redux.
 In this situation we need to pass this dispatch function along with store state through context value.
 
@@ -550,7 +552,7 @@ All provided changes you can test yourself on accordingly created codesandbox.io
 
 ## BONUS: Profiling our app
 
-As a comparision of performance for both **Redux** and **Hooks** solutions i would like to show you a React Profiler API. It was introduced in React 16.9 for the first time. Ir provides us a **Profiler** component which helps to measure component timing for every single render. It takes two required props which are `id` (name of your profiler as you can have many of them), and `onRender` which is callback for component updates. It receives several parameters which you can check in [React documentation](https://pl.reactjs.org/docs/profiler.html "React documentation"). We are interested in two of them which are `actualDuration` (showing us _"Time spent rendering the `Profiler` and its descendants for the current update. ") and `phase` (which return _"mount" | "update"_) while we want to read only values when app is rendered first time.
+As a comparision of performance for both **Redux** and **Hooks** solutions I would like to show you a React Profiler API. It was introduced in React 16.9 for the first time. Ir provides us a **Profiler** component which helps to measure component timing for every single render. It takes two required props which are `id` (name of your profiler as you can have many of them), and `onRender` which is callback for component updates. It receives several parameters which you can check in [React documentation](https://pl.reactjs.org/docs/profiler.html "React documentation"). We are interested in two of them which are `actualDuration` (showing us _"Time spent rendering the `Profiler` and its descendants for the current update. ") and `phase` (which return _"mount" | "update"_) while we want to read only values when app is rendered first time.
 To implement Profiler for our AppStore you should change for both projects `App.js` file like so : 
 
 ```javascript
@@ -575,7 +577,7 @@ After that you are able to read time of your app required for first render. Let'
   
 It is anyway hard to investigate what causes those rendering time differences. Profiler component for React is great feature for measuring smaller parts of application or even single components to identify parts that may bring benefits from optimizations like memoization etc. But if you like to catch all components at all and even better - in a tree view, then you have to use browsers built in DevTools Profiler for React. For some browsers it's available as an extension.
   
-Thanks to that profiler you can measure timings for even specific actions. Just start recording profile in point you want to check performance, and stop it whenever your use case ended. In my example i just stopped recording when components appeared on my screen (no need to wait for that as it will be second measurement as components updates and we are interested only about firs render time). After getting results aim the longest rendering components and try to use useMemo for memoization their functionality or whenever possible use lazy() for dynamic importing.
+Thanks to that profiler you can measure timings for even specific actions. Just start recording profile in point you want to check performance, and stop it whenever your use case ended. In my example I just stopped recording when components appeared on my screen (no need to wait for that as it will be second measurement as components updates and we are interested only about firs render time). After getting results aim the longest rendering components and try to use useMemo for memoization their functionality or whenever possible use lazy() for dynamic importing.
  
  I made 5 test for our Redux app as well as for our Hooks app. You can see the results below :
    
@@ -588,10 +590,10 @@ Thanks to that profiler you can measure timings for even specific actions. Just 
  4) Provider
  5) ReactRedux.Provider
  6) ConnectFunction  (for both Teams and Statistics)
- 7) ReactRedux.Provider (for both Teams and Statistics) (which is consumer i believe)
+ 7) ReactRedux.Provider (for both Teams and Statistics) (which is consumer I believe)
  8) and finally our two components Teams and Statistics
  
-For 5 tries i recorded following render times : 9.4, 8.9, 8.7, 8.4, 8.1 which gives us around 8.7 as an average.
+For 5 tries I recorded following render times : 9.4, 8.9, 8.7, 8.4, 8.1 which gives us around 8.7 as an average.
  
 Now lets do the same for Hooks implementations: 
 
@@ -605,7 +607,7 @@ We can see that the structure of project is more flatten, and functionality is m
 4) Context.Provider
 5) and finally our two components Teams and Statistics
 
-For 5 tries i recorded following render times : 5.8, 6.1, 6, 6.4, 6.3 which gives us around 6.1 as an average.
+For 5 tries I recorded following render times : 5.8, 6.1, 6, 6.4, 6.3 which gives us around 6.1 as an average.
  
 The difference is huge (around 30%). Not only in cleaner code and way better structure but because using built in React functionality we are able to save tons of times. Our values are small, but you can imagine it in large, complex application as we cannot forget we are profiling just two empty areas.
 
@@ -614,6 +616,6 @@ Next you can try to play with measurement by yourself. Try to make own calculati
 As an conclusion you may take a look one more time how little is needed to switch between Redux and useReducer, as their actions and reducers stays the same and store object build with components connection to it requires actually several really easy and quick modifications, giving you less, cleaner, faster and better code ;)  
 
 ### HOLD ON! We haven't finished yet.
-As i promised, while we have our application ready, we can lunch TypeScript support and check the places where we can improve our code and make it safe from possible issues. Our current code is working as expected, but actually it is still sensitive to some problems. Let's say for example we didnt provided `process.env.REACT_APP_API_KEY` variable and we are just using it directly. You can imagine what may happened when it's missing. To see how we can prevent those situations take a look at our [continuous article](https://www.chop-chop.org/article-1 "continuous article") and read more.
+As I promised, while we have our application ready, we can lunch TypeScript support and check the places where we can improve our code and make it safe from possible issues. Our current code is working as expected, but actually it is still sensitive to some problems. Let's say for example we didnt provided `process.env.REACT_APP_API_KEY` variable and we are just using it directly. You can imagine what may happened when it's missing. To see how we can prevent those situations take a look at our [continuous article](https://www.chop-chop.org/article-1 "continuous article") and read more.
 
 ```//TODO : Add proper article URL```
