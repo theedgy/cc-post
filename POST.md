@@ -438,8 +438,7 @@ useEffect(() => {
 
 > One thing may be interested to note here as I used a newest ES `'stats' in currentTeam` construction to check if `stats` key exists in team object. It's still equivalent to ways like `Object.keys().includes()` or or any others.
 
-Here is a good place where we should stop for a while and think about user experience. As you able to "render in mind" thee code you can notice that we only inform our app about it's state, and user still doesnt know if there is something happening in background. So lets implement some basic loader and use it for our components:
-I believe the best place for it will be with all app components so create a file like : 
+Here is a good place where we should stop for a while and think about user experience. As you are able to "render in mind" tree code you can notice that we only inform our app about it's state, and user still doesn't know if there is something happening in background. So lets implement some basic loader and use it for our components:
 
 ```bash
 ├── src
@@ -448,7 +447,7 @@ I believe the best place for it will be with all app components so create a file
 │   │   │   └── index.js
 ```
 
-and place there whatever loader you like. You can copy one from our example, just go to codesandbox.io to find it ;)
+Put there whatever loader you like. You can copy one from our example, just go to codesandbox.io to find it ;)
 
 Then we can use it in our Teams and Statistics like eg: 
 
@@ -468,10 +467,10 @@ Then we can use it in our Teams and Statistics like eg:
  </section>
 ```
 
-Note that we have two loaders here. First one appears when component is waiting for teams data (required for another Teams component, and here is a situation which I mentioned to you before that whenever it grows its good to keep that connection state with the data itself to use in many places).
+Note that we have two loaders here. First one appears when component is waiting for teams data (required for another Teams component, and here is a situation which I mentioned to you before that whenever it grows it's good to keep that connection state with the data itself to use in many places).
 Then we have second one appeared when our component effect is connecting to API and set status to `loading`. At the end we display simple information to make user know what to do (but only at initial state), and when stats are finally loaded there are looped below. 
 
-So for now I presented only functional code point of view, because additional styles and other codes would make our article to big. All that code styled a bit to better visualise you can find below on codesandbox:
+So far I presented only functional code point of view, because additional styles and other code would make our article too big. All that code styled a bit for better UX you can find below on codesandbox:
 
 ```
 //TODO : CODESANDBOX LINK FOR REDUX
@@ -480,10 +479,10 @@ So for now I presented only functional code point of view, because additional st
 # useReducer + useContext
 
 Our plan is to switch functionality for global state from external Redux library to built in React hooks without any components rendered content interruption.
-We will try to keep consistent as many variables names and namespaces as possible. We can left our actions and reducers untouched as they our new useReducer functionality actually mimic those one from redux.
+We will try to keep consistent as many variables names and namespaces as possible. We can left our actions and reducers untouched, as they are new useReducer functionality, and we actually mimic those one from Redux.
 
 So our main issue here is to write new store based on that hook.
-For our `index.js` file from `store` folder (`AppStore` component) let's provide some minor small modifications: 
+For our `index.js` file from `store` folder (`AppStore` component) let's provide some small modifications: 
 
 ```javascript
 export const AppContext = React.createContext({});
@@ -503,11 +502,11 @@ export const AppStore= ({ children }) => {
 ```
     
 First of all we removed Redux Provider and used plain React Context (1st line). Then we replaced `createStore` function with **useReducer** hook.
-This reducers returns with two values array, our state, and dispatch function to fire an actions on state. It should looks familiar to you as we used it as a parameter for `mapDispatchToProps` function used with `connect` HOC from Redux.
+This reducers returns array with two values, our state and dispatch function to fire an actions on state. Dispatch should looks familiar to you, as we used it as a parameter for `mapDispatchToProps` function via `connect` HOC from Redux.
 In this situation we need to pass this dispatch function along with store state through context value.
 
-If you observer closely you noticed also that we still didn't removed `combineReducers` function, and this function was used from Redux library so what is going on here ?
-The reducers combining is quite simple and based on retrieving states from every entry to allocate them by given key. We can do slightly the same as Redux does in our another helper function.
+If you observed closely you noticed also that we still didn't removed `combineReducers` function, and this function was used from Redux library, so what is going on here ?
+The reducer's combining is quite simple and based on retrieving states from every entry to allocate them by given key. We can do slightly the same as Redux does in our another helper function.
 Let's create `combineReducres` folder with `index.js` file inside of `services` folder with a following function: 
 
 ```javascript
@@ -518,31 +517,32 @@ export const combineReducers = (reducerDict) =>
         }), state);
 ```
 
-You can find many different implementation of that functionality across the internet, and they all based on original Redux combining and try to mimic that as close as possible. I used and modified for better ES6 some ofe existing ones as well (from [thchia](https://gist.github.com/thchia/dd1bc8200fd8cff89cfa6c928983e5c4 "thchia")).
+You can find many different implementation of that functionality across the internet, and they all based on original Redux combining and try to mimic that as close as possible. I used and modified for better ES6 some of existing ones as well (from [thchia](https://gist.github.com/thchia/dd1bc8200fd8cff89cfa6c928983e5c4 "thchia")).
 This will make our state looks combined exactly the same way as it comes from Redux.
-As you can see there is quite little changes for store building and only one small helper function.
+As you can see there are minor changes for store building and only one small helper function.
 
-Our store is now ready and we can switch our components connection to it. Starting with Teams component we need to clean it from redux functionality so remove `mapStateToProps`, `mapDispatchToProps` and their `connect` to component and revert it to plain export as usual without any props passing to it:
+Our store is now ready and we can switch our components connection to it. Starting with Teams component we need to clean it from redux functionality, so remove `mapStateToProps`, `mapDispatchToProps` and their `connect` to component, then revert it to plain export as usual without any props passing to it:
 
 ```javascript
 export const Teams = () => {...}
 ```
  
-And now before our `useEffect` instead of taking data from props (populated by redux before) we are going to pull them from context where we stored it in last step.
+ Instead of taking data from props (populated by redux before), we are going to pull them from context where we stored it in last step.
 
 ```javascript
 const { state: {teams, current}, dispatch } = useContext(AppContext);
 ```
 
-Lastly we need to switch firing dispatch, as we do not map it via custom namespace to our component props we can use dispatch function directly in our promise response, so all we need is to change `onAddTeams(r.teams);` to `dispatch(addTeams(response.teams));`.
+Lastly we need to switch dispatching functionality. As we don't map it via custom namespace to our component props we can use dispatch function directly in our promise response, so all we need is to change `onAddTeams(r.teams);` to `dispatch(addTeams(response.teams));`.
 
-I know you may be surprised but actually it's all we have to do to make our component work. Take a look at whole diff of those files to realise they are really small adjustments:
+I know you may be surprised but actually it's all we have to do, to make our component work. Take a look at whole diff of those files to realise there are really small adjustments:
+
 ![](assets/teams_diff.png)
 
-The same adjustments we need to provide for Statistics component so:
-1) Remove `connect` functionality
-2) switch data from props handling to useContext hook and connect it to AppStore context
-3) change action dispatching to strict using dispatch function
+The same adjustments we need to provide for Statistics component, so:
+1) Remove `connect` functionality;
+2) Switch data from props handling to useContext hook and connect it to AppStore context;
+3) Change action dispatching to strict using dispatch function;
 
 That's it. We change around 15 lines of code and same we removed. So we ended up with less and more readable code, without any external libraries needed and having exactly the same functionality.
 
@@ -552,8 +552,8 @@ All provided changes you can test yourself on accordingly created codesandbox.io
 
 ## BONUS: Profiling our app
 
-As a comparision of performance for both **Redux** and **Hooks** solutions I would like to show you a React Profiler API. It was introduced in React 16.9 for the first time. Ir provides us a **Profiler** component which helps to measure component timing for every single render. It takes two required props which are `id` (name of your profiler as you can have many of them), and `onRender` which is callback for component updates. It receives several parameters which you can check in [React documentation](https://pl.reactjs.org/docs/profiler.html "React documentation"). We are interested in two of them which are `actualDuration` (showing us _"Time spent rendering the `Profiler` and its descendants for the current update. ") and `phase` (which return _"mount" | "update"_) while we want to read only values when app is rendered first time.
-To implement Profiler for our AppStore you should change for both projects `App.js` file like so : 
+As a comparision of performance for both **Redux** and **Hooks** solutions I would like to show you a React Profiler API. It was introduced in React 16.9 for the first time. It provides us a **Profiler** component which helps to measure component timing for every single render. It takes two required props which are `id` (name of your profiler, as you can have many of them), and `onRender` which is callback for component updates. It receives several parameters which you can check in [React documentation](https://pl.reactjs.org/docs/profiler.html "React documentation"). We are interested in two of them which are `actualDuration` (showing us _"Time spent rendering the `Profiler` and its descendants for the current update."_) and `phase` (which return _"mount" | "update"_), while we want to read only values when app is rendered first time.
+To implement Profiler for our AppStore you should change for both projects `App.js` file like below: 
 
 ```javascript
  export const App = () => {
@@ -573,9 +573,9 @@ To implement Profiler for our AppStore you should change for both projects `App.
  };
 ```
 
-After that you are able to read time of your app required for first render. Let's go to browser, open devtools at console tab, refresh several times and (eye)catch average values. You can easy notice that our Hooks implementation is always faster, sometimes even twice. I left those Profilers in my code at codesandbox.io so you can test it on your own at take a look at console results.
+After that, you are able to read time of your app required for first render. Let's go to browser, open devtools at console tab, refresh several times and (eye)catch average values. You can easily notice that our Hooks implementation is always faster, sometimes even twice. I left those Profilers in my code at codesandbox.io, so you can test it on your own and take a look at console results.
   
-It is anyway hard to investigate what causes those rendering time differences. Profiler component for React is great feature for measuring smaller parts of application or even single components to identify parts that may bring benefits from optimizations like memoization etc. But if you like to catch all components at all and even better - in a tree view, then you have to use browsers built in DevTools Profiler for React. For some browsers it's available as an extension.
+It is anyway hard to investigate what causes those rendering time's differences. Profiler component for React is great feature for measuring smaller parts of application or even single components to identify parts that may bring benefits from optimizations like memoization etc. But if you like to catch all components at once or even better, in a tree view, then you have to use browsers built in DevTools Profiler for React. For some browsers it's available as an extension.
   
 Thanks to that profiler you can measure timings for even specific actions. Just start recording profile in point you want to check performance, and stop it whenever your use case ended. In my example I just stopped recording when components appeared on my screen (no need to wait for that as it will be second measurement as components updates and we are interested only about firs render time). After getting results aim the longest rendering components and try to use useMemo for memoization their functionality or whenever possible use lazy() for dynamic importing.
  
@@ -591,7 +591,7 @@ Thanks to that profiler you can measure timings for even specific actions. Just 
  5) ReactRedux.Provider
  6) ConnectFunction  (for both Teams and Statistics)
  7) ReactRedux.Provider (for both Teams and Statistics) (which is consumer I believe)
- 8) and finally our two components Teams and Statistics
+ 8) Finally our two components Teams and Statistics
  
 For 5 tries I recorded following render times : 9.4, 8.9, 8.7, 8.4, 8.1 which gives us around 8.7 as an average.
  
@@ -599,23 +599,23 @@ Now lets do the same for Hooks implementations:
 
 ![](assets/hooks_profile.jpg)
   
-We can see that the structure of project is more flatten, and functionality is much less distributed. It's hidden under hooks rather tha exposed as standalone components (or High Order Components). It looks much more readable and has less steps as we compare to redux tree it will looks like :
+We can see that the structure of project is more flatten, and functionality is much less distributed. It's hidden under hooks rather tha exposed as standalone components (or High Order Components). It looks much more readable and has less steps, as we compare to redux tree it will looks like :
 
 1) App
 2) Profiler
 3) AppStore
 4) Context.Provider
-5) and finally our two components Teams and Statistics
+5) Finally our two components Teams and Statistics
 
 For 5 tries I recorded following render times : 5.8, 6.1, 6, 6.4, 6.3 which gives us around 6.1 as an average.
  
-The difference is huge (around 30%). Not only in cleaner code and way better structure but because using built in React functionality we are able to save tons of times. Our values are small, but you can imagine it in large, complex application as we cannot forget we are profiling just two empty areas.
+The difference is huge (around 30%). Not only in cleaner code and way better structure, but using built-in React functionality we are able to save tons of times. Our data amount is small, but you can imagine it in large, complex application as we cannot forget we are profiling just two empty areas.
 
-Next you can try to play with measurement by yourself. Try to make own calculating based on React Profiler API with some of your components, or for overall and bigger purposes with great visualising effect use Profiler from your DevTools. You can try test reducers and their impact on rendering time to have better insight about the real differences in work. Both ready projects you can find on codesanbox.io with links above (or you can clone github repo linked from codesandbox). Do your own test, take your own conclusions, let me know what you think.
+Next you can try to play with measurement by yourself. Try to make own calculating based on React Profiler API with some of your components, or for overall and bigger purposes with great visualising effect use Profiler from your DevTools. You can try test reducers and their impact on rendering time to have better insight about the real differences in work. Both ready projects you can find on codesanbox.io with links above (or you can clone github repo linked from codesandbox). Do your own test, take your own conclusions, and let me know what you think.
 
 As an conclusion you may take a look one more time how little is needed to switch between Redux and useReducer, as their actions and reducers stays the same and store object build with components connection to it requires actually several really easy and quick modifications, giving you less, cleaner, faster and better code ;)  
 
 ### HOLD ON! We haven't finished yet.
-As I promised, while we have our application ready, we can lunch TypeScript support and check the places where we can improve our code and make it safe from possible issues. Our current code is working as expected, but actually it is still sensitive to some problems. Let's say for example we didnt provided `process.env.REACT_APP_API_KEY` variable and we are just using it directly. You can imagine what may happened when it's missing. To see how we can prevent those situations take a look at our [continuous article](https://www.chop-chop.org/article-1 "continuous article") and read more.
+As I promised, while we have our application ready, we can lunch TypeScript support and check the places where we can improve our code and make it safe from possible issues. Our current code is working as expected, but actually it is still sensitive to some problems. Let's say for example we didn't provided `process.env.REACT_APP_API_KEY` variable and we are just using it directly. You can imagine what may happens when it's missing. To see how we can prevent those situations take a look at our [continuous article](https://www.chop-chop.org/article-1 "continuous article") and read more.
 
 ```//TODO : Add proper article URL```
